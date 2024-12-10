@@ -12,12 +12,8 @@
         <a-asset-item id="model1" src="month5.glb"></a-asset-item>
         <a-asset-item id="model2" src="month1.glb"></a-asset-item>
         <a-asset-item id="model3" src="month7.glb"></a-asset-item>
-        <a-asset-item id="model4" src="Month10.glb"></a-asset-item>
         <a-asset-item id="model5" src="month1.glb"></a-asset-item>
-        <video id="transparentVideo" muted loop playsinline webkit-playsinline>
-          <source src="output_video.webm.webm" type="video/webm">
-          <source src="output_video.mov" type="video/mp4; codecs=hvc1">
-        </video>
+        <video id="transparent-video" src="output_video.webm" loop="true" crossorigin="anonymous"></video>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -35,7 +31,7 @@
       </a-entity>
 
       <a-entity mindar-image-target="targetIndex: 3" id="target-entity-4">
-        <a-entity material="shader: transparent-video; src: #transparentVideo" geometry="primitive: plane; width: 1; height: 1.8" position="0 0 0.1"></a-entity>
+        <a-plane position="0 0 0.1" scale="1 1 1" transparent-video-shader="src: #transparent-video"></a-plane>
       </a-entity>
 
       <a-entity mindar-image-target="targetIndex: 4" id="target-entity-5">
@@ -44,21 +40,22 @@
     </a-scene>
 
     <script>
-      document.addEventListener('click', () => {
-        const video = document.querySelector('#transparentVideo');
-        video.play();
-      });
-
       const targets = document.querySelectorAll('[mindar-image-target]');
       targets.forEach(target => {
         target.addEventListener('targetFound', () => {
-          const video = document.querySelector('#transparentVideo');
-          video.play();
+          const mixer = target.querySelector('[animation-mixer]');
+          if (mixer) mixer.setAttribute('animation-mixer', 'timeScale', 1);
+
+          const video = target.querySelector('video');
+          if (video) video.play();
         });
 
         target.addEventListener('targetLost', () => {
-          const video = document.querySelector('#transparentVideo');
-          video.pause();
+          const mixer = target.querySelector('[animation-mixer]');
+          if (mixer) mixer.setAttribute('animation-mixer', 'timeScale', 0);
+
+          const video = target.querySelector('video');
+          if (video) video.pause();
         });
       });
     </script>
